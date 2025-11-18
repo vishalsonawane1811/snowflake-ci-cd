@@ -36,4 +36,7 @@ jobs:
             SNOWFLAKE_SCHEMA: ${{ secrets.SF_SCHEMA }}
       
         run: |
-          snow sql -f release/*.sql
+         for file in release/*.sql; do
+            echo "Running: $file"
+            snow sql -f "$file"    
+         done
