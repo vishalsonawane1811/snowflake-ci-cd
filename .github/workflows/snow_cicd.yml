@@ -37,7 +37,8 @@ jobs:
       - name: 🧪 Test Snowflake Connection
         # Fix: Explicitly use the 'env' profile created by the action.
         run: snow connection test -c env
-
+        
+      - name: 🚀 Run Deployment Scripts
         run: |
           for file in release/*.sql; do
             echo "Running: $file"
