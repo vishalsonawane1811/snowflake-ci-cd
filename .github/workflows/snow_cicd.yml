@@ -1,19 +1,27 @@
-name: ❄️ Deploy to Snowflake
+name: ❄️ Snowflake CI/CD Deployment
 
 on:
   push:
     branches:
-      - master # Note: 'main' is the modern standard, consider updating this branch name
+      - master  # Or 'main', depending on your default branch name
+    paths:
+      # Only run this workflow if files in the 'release' directory change
+      - 'release/**'
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     
-    # 1. Map all secrets to environment variables once at the job level
+    # Optional: Use an environment for better tracking and approvals
+    environment: production 
+
+    # --- 1. SECRETS MAPPING (Job-Level) ---
+    # Map all GitHub secrets to environment variables.
+    # The 'snowflake-cli-action' will automatically use these.
     env:
       SNOWFLAKE_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
       SNOWFLAKE_USER: ${{ secrets.SNOWFLAKE_USER }}
-      SNOWFLAKE_PASSWORD: ${{ secrets.SNOWFLAKE_PASSWORD }}
+      SNOWFLAKE_PASSWORD: ${{ secrets.SNOWFLAKE_PASSWORD }} # Using password auth
       SNOWFLAKE_ROLE: ${{ secrets.SNOWFLAKE_ROLE }}
       SNOWFLAKE_WAREHOUSE: ${{ secrets.SNOWFLAKE_WAREHOUSE }}
       SNOWFLAKE_DATABASE: ${{ secrets.SNOWFLAKE_DATABASE }}
@@ -21,29 +29,29 @@ jobs:
 
     steps:
       - name: ⬇️ Checkout repository
-        uses: actions/checkout@v4 # Updated to v4 for current best practice
+        uses: actions/checkout@v4
 
-      # 2. Use the official action for CLI setup (replaces setup-python and pip install)
+      # --- 2. SETUP SNOWFLAKE CLI ---
       - name: ⚙️ Setup and Configure Snowflake CLI
-        # This action automatically detects and uses the SNOWFLAKE_* environment variables
+        # This official action installs the CLI and creates the 'env' connection profile
         uses: snowflakedb/snowflake-cli-action@v2.0 
-
-      # 3. Test Connection (Explicitly using the 'env' connection profile)
+        
+      # --- 3. TEST CONNECTION ---
       - name: 🧪 Test Snowflake Connection
-        # The 'env' profile is automatically created from the job's SNOWFLAKE_* variables
+        # MUST explicitly use the '-c env' flag to target the connection profile 
+        # created by the action from the environment variables.
         run: snow connection test -c env
-
-      # 4. Deploy SQL files to Snowflake
+          
+      # --- 4. EXECUTE SQL FILES ---
       - name: 🚀 Run Deployment Scripts
         run: |
           echo "Starting SQL deployment..."
           
-          # Iterate through files and execute them
+          # Use a for loop to iterate over all SQL files and execute them one by one
           for file in release/*.sql; do
             echo "-> Executing: $file"
             
-            # Use the 'snow sql' command with the 'env' connection profile.
-            # This is cleaner and more secure than passing all credentials as flags.
+            # Use the '-c env' flag for every snow sql command
             snow sql -c env -f "$file"
           done
           echo "All SQL deployment files executed."
