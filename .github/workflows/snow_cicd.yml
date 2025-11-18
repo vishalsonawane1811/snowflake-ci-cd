@@ -1,0 +1,28 @@
+name: Deploy to Snowflake
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Install Snowflake CLI
+        run: pip install snowflake-cli
+
+      - name: Run SQL files in order
+        run: |
+          snowflake --account ${{ secrets.SNOWFLAKE_ACCOUNT }} \
+            --user ${{ secrets.SNOWFLAKE_USERNAME }} \
+            --password ${{ secrets.SNOWFLAKE_PASSWORD }} \
+            --role ${{ secrets.SNOWFLAKE_ROLE }} \
+            --warehouse ${{ secrets.SNOWFLAKE_WAREHOUSE }} \
+            --database ${{ secrets.SNOWFLAKE_DATABASE }} \
+            --schema ${{ secrets.SNOWFLAKE_SCHEMA }} \
+            sql release/*.sql
