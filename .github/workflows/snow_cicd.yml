@@ -12,31 +12,30 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
-        
+
       - name: Install Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.10'
-          
+
       - name: Install Snowflake CLI
         run: |
           pip install --upgrade pip
-          pip install snowflake-cli-labs
-          pip install snowflake
-          echo "PATH=$HOME/.local/bin:$PATH" >> $GITHUB_ENV
+          pip install snowflake-cli
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
 
       - name: Run SQL files in order
         env:
-            SNOWFLAKE_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
-            SNOWFLAKE_USER: ${{ secrets.SNOWFLAKE_USER }}
-            SNOWFLAKE_PASSWORD: ${{ secrets.SNOWFLAKE_PASSWORD }}
-            SNOWFLAKE_ROLE: ${{ secrets.SNOWFLAKE_ROLE }}
-            SNOWFLAKE_WAREHOUSE: ${{ secrets.SNOWFLAKE_WAREHOUSE }}
-            SNOWFLAKE_DATABASE: ${{ secrets.SNOWFLAKE_DATABASE }}
-            SNOWFLAKE_SCHEMA: ${{ secrets.SNOWFLAKE_SCHEMA }}
-      
+          SNOWFLAKE_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
+          SNOWFLAKE_USER: ${{ secrets.SNOWFLAKE_USER }}
+          SNOWFLAKE_PASSWORD: ${{ secrets.SNOWFLAKE_PASSWORD }}
+          SNOWFLAKE_ROLE: ${{ secrets.SNOWFLAKE_ROLE }}
+          SNOWFLAKE_WAREHOUSE: ${{ secrets.SNOWFLAKE_WAREHOUSE }}
+          SNOWFLAKE_DATABASE: ${{ secrets.SNOWFLAKE_DATABASE }}
+          SNOWFLAKE_SCHEMA: ${{ secrets.SNOWFLAKE_SCHEMA }}
+
         run: |
-         for file in release/*.sql; do
+          for file in release/*.sql; do
             echo "Running: $file"
-            snow sql -f "$file"    
-         done
+            snow sql -f "$file"
+          done
