@@ -1,0 +1,1 @@
+CREATE TABLE IF NOT EXISTS demo(column1 string, column2 number, column3 date);
