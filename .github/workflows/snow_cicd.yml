@@ -33,6 +33,10 @@ jobs:
           SNOWFLAKE_WAREHOUSE: ${{ secrets.SNOWFLAKE_WAREHOUSE }}
           SNOWFLAKE_DATABASE: ${{ secrets.SNOWFLAKE_DATABASE }}
           SNOWFLAKE_SCHEMA: ${{ secrets.SNOWFLAKE_SCHEMA }}
+         
+      - name: 🧪 Test Snowflake Connection
+        # Fix: Explicitly use the 'env' profile created by the action.
+        run: snow connection test -c env
 
         run: |
           for file in release/*.sql; do
