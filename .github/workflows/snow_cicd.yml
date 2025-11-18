@@ -19,7 +19,7 @@ jobs:
           python-version: '3.10'
 
       - name: Install Snowflake CLI
-        run: pip install snowflake-cli
+        run: pip install snowflake-cli-labs
 
       - name: Run SQL files in order
         run: |
