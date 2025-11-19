@@ -1,57 +1,49 @@
-name: ❄️ Snowflake CI/CD Deployment
+name: Deploy to Snowflake
 
 on:
   push:
     branches:
-      - master  # Or 'main', depending on your default branch name
-    paths:
-      # Only run this workflow if files in the 'release' directory change
-      - 'release/**'
+      - master
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    
-    # Optional: Use an environment for better tracking and approvals
-    environment: production 
-
-    # --- 1. SECRETS MAPPING (Job-Level) ---
-    # Map all GitHub secrets to environment variables.
-    # The 'snowflake-cli-action' will automatically use these.
-    env:
-      SNOWFLAKE_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
-      SNOWFLAKE_USER: ${{ secrets.SNOWFLAKE_USER }}
-      SNOWFLAKE_PASSWORD: ${{ secrets.SNOWFLAKE_PASSWORD }} # Using password auth
-      SNOWFLAKE_ROLE: ${{ secrets.SNOWFLAKE_ROLE }}
-      SNOWFLAKE_WAREHOUSE: ${{ secrets.SNOWFLAKE_WAREHOUSE }}
-      SNOWFLAKE_DATABASE: ${{ secrets.SNOWFLAKE_DATABASE }}
-      SNOWFLAKE_SCHEMA: ${{ secrets.SNOWFLAKE_SCHEMA }}
 
     steps:
-      - name: ⬇️ Checkout repository
-        uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-      # --- 2. SETUP SNOWFLAKE CLI ---
-      - name: ⚙️ Setup and Configure Snowflake CLI
-        # This official action installs the CLI and creates the 'env' connection profile
-        uses: snowflakedb/snowflake-cli-action@v2.0 
-        
-      # --- 3. TEST CONNECTION ---
-      - name: 🧪 Test Snowflake Connection
-        # MUST explicitly use the '-c env' flag to target the connection profile 
-        # created by the action from the environment variables.
-        run: snow connection test -c env
-          
-      # --- 4. EXECUTE SQL FILES ---
-      - name: 🚀 Run Deployment Scripts
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+
+      - name: Install Snowflake CLI
         run: |
-          echo "Starting SQL deployment..."
-          
-          # Use a for loop to iterate over all SQL files and execute them one by one
+          pip install --upgrade pip
+          pip install snowflake-cli-labs
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+      - name: Set environment variables
+        env:
+          SNOWFLAKE_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
+          SNOWFLAKE_USER: ${{ secrets.SNOWFLAKE_USER }}
+          SNOWFLAKE_PASSWORD: ${{ secrets.SNOWFLAKE_PASSWORD }}
+          SNOWFLAKE_ROLE: ${{ secrets.SNOWFLAKE_ROLE }}
+          SNOWFLAKE_WAREHOUSE: ${{ secrets.SNOWFLAKE_WAREHOUSE }}
+          SNOWFLAKE_DATABASE: ${{ secrets.SNOWFLAKE_DATABASE }}
+          SNOWFLAKE_SCHEMA: ${{ secrets.SNOWFLAKE_SCHEMA }}
+        
+      -name: Deploy SQL files to Snowflake
+        run: |
           for file in release/*.sql; do
-            echo "-> Executing: $file"
-            
-            # Use the '-c env' flag for every snow sql command
-            snow sql -c env -f "$file"
+            echo "Running: $file"
+            snow sql -f "$file" \
+              --account "$SNOWFLAKE_ACCOUNT" \
+              --user "$SNOWFLAKE_USER" \
+              --password "$SNOWFLAKE_PASSWORD" \
+              --role "$SNOWFLAKE_ROLE" \
+              --warehouse "$SNOWFLAKE_WAREHOUSE" \
+              --database "$SNOWFLAKE_DATABASE" \
+              --schema "$SNOWFLAKE_SCHEMA"
           done
-          echo "All SQL deployment files executed."
