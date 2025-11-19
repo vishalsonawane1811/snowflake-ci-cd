@@ -1,7 +1,7 @@
 DECLARE 
     col_exists BOOLEAN;
 
-BEGINcolumn3
+BEGIN
     SELECT EXISTS (
         SELECT 1
         FROM INFORMATION_SCHEMA.COLUMNS
@@ -19,7 +19,7 @@ END;
 DECLARE 
     col_exists BOOLEAN;
 
-BEGINcolumn3
+BEGIN
     SELECT EXISTS (
         SELECT 1
         FROM INFORMATION_SCHEMA.COLUMNS
