@@ -1,1 +1,1 @@
-CREATE TABLE IF NOT EXISTS SNOWFLAKE_LEARNING_DB.PUBLIC.demo(column1 string, column2 int, column3 date);
+CREATE TABLE IF NOT EXISTS snow_demo.demo_access_schema.demo(column1 string, column2 int, column3 date);
