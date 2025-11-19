@@ -1,29 +1,32 @@
 BEGIN
-	LET col_exists BOOLEAN := (
-			SELECT COUNT(*) > 0
-			FROM INFORMATION_SCHEMA.COLUMNS
-			WHERE TABLE_SCHEMA = 'demo_access_schema'
-			  AND TABLE_NAME = 'demo'
-			  AND COLUMN_NAME = 'column3'
-		);
 
-    IF (col_exists) THEN
-        EXECUTE IMMEDIATE 'ALTER TABLE demo_access_schema.demo RENAME COLUMN column3 TO created_date';
+    -- rename column3 -> created_date
+    LET col1_exists BOOLEAN := (
+        SELECT COUNT(*) > 0
+        FROM INFORMATION_SCHEMA.COLUMNS
+        WHERE TABLE_SCHEMA = 'DEMO_ACCESS_SCHEMA'
+          AND TABLE_NAME = 'DEMO'
+          AND COLUMN_NAME = 'COLUMN3'
+    );
+
+    IF (col1_exists) THEN
+        EXECUTE IMMEDIATE 
+            'ALTER TABLE DEMO_ACCESS_SCHEMA.DEMO RENAME COLUMN COLUMN3 TO CREATED_DATE';
     END IF;
-END;
 
 
-BEGIN
-	LET col_exists BOOLEAN := (
-			SELECT COUNT(*) > 0
-			FROM INFORMATION_SCHEMA.COLUMNS
-			WHERE TABLE_SCHEMA = 'demo_access_schema'
-			  AND TABLE_NAME = 'demo'
-			  AND COLUMN_NAME = 'column2'
-		);
+    -- rename column2 -> id
+    LET col2_exists BOOLEAN := (
+        SELECT COUNT(*) > 0
+        FROM INFORMATION_SCHEMA.COLUMNS
+        WHERE TABLE_SCHEMA = 'DEMO_ACCESS_SCHEMA'
+          AND TABLE_NAME = 'DEMO'
+          AND COLUMN_NAME = 'COLUMN2'
+    );
 
-    IF (col_exists) THEN
-        EXECUTE IMMEDIATE 'ALTER TABLE demo_access_schema.demo RENAME COLUMN column2 TO id';
+    IF (col2_exists) THEN
+        EXECUTE IMMEDIATE 
+            'ALTER TABLE DEMO_ACCESS_SCHEMA.DEMO RENAME COLUMN COLUMN2 TO ID';
     END IF;
-END;
 
+END;
