@@ -11,13 +11,10 @@ BEGIN
     ) INTO :col_exists;
 
     IF (col_exists) THEN
-        EXECUTE IMMEDIATE 'ALTER TABLE MY_SCHEMA.MY_TABLE RENAME COLUMN column3 TO created_date';
+        EXECUTE IMMEDIATE 'ALTER TABLE demo_access_schema.demo RENAME COLUMN column3 TO created_date';
     END IF;
 END;
 
-
-DECLARE 
-    col_exists BOOLEAN;
 
 BEGIN
     SELECT EXISTS (
@@ -29,7 +26,7 @@ BEGIN
     ) INTO :col_exists;
 
     IF (col_exists) THEN
-        EXECUTE IMMEDIATE 'ALTER TABLE MY_SCHEMA.MY_TABLE RENAME COLUMN column2 TO id';
+        EXECUTE IMMEDIATE 'ALTER TABLE demo_access_schema.demo RENAME COLUMN column2 TO id';
     END IF;
 END;
 
