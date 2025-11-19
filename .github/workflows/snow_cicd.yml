@@ -44,9 +44,7 @@ jobs:
             --role "$SNOWFLAKE_ROLE" \
             --warehouse "$SNOWFLAKE_WAREHOUSE" \
             --database "$SNOWFLAKE_DATABASE" \
-            --schema "$SNOWFLAKE_SCHEMA" \
-            --verbose
-            --default
+            --schema "$SNOWFLAKE_SCHEMA"
             
             for file in release/*.sql; do
                 echo "Running: $file"
