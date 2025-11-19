@@ -46,10 +46,11 @@ jobs:
             --database "$SNOWFLAKE_DATABASE" \
             --schema "$SNOWFLAKE_SCHEMA" \
             --overwrite
+            --default
             
-          for file in release/*.sql; do
-            echo "Running: $file"
-            # FIX 2: Run without flags. 
-            # The CLI will automatically read the variables from the 'env' block above.
-            snow sql -f "$file"
-          done
+            for file in release/*.sql; do
+                echo "Running: $file"
+                # FIX 2: Run without flags. 
+                # The CLI will automatically read the variables from the 'env' block above.
+                snow sql -f "$file"
+            done
