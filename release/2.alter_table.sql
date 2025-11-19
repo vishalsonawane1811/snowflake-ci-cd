@@ -1,3 +1,4 @@
+EXECUTE IMMEDIATE $$
 BEGIN
 
     -- rename column3 -> created_date
@@ -30,3 +31,4 @@ BEGIN
     END IF;
 
 END;
+$$;
