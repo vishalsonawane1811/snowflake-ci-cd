@@ -24,7 +24,7 @@ jobs:
           pip install snowflake-cli-labs
           echo "$HOME/.local/bin" >> $GITHUB_PATH
 
-      - name: Set environment variables
+      - name: Set environment variables and deploy
         env:
           SNOWFLAKE_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
           SNOWFLAKE_USER: ${{ secrets.SNOWFLAKE_USER }}
