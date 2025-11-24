@@ -35,6 +35,6 @@ jobs:
         run: |            
           for file in release/*.sql; do
             echo "Running: $file"
-            snow -x -f "$file" 
+            snow connection -f "$file" -x
           done
 
