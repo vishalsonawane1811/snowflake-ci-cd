@@ -32,9 +32,9 @@ jobs:
             snow connection test -x
 
       - name: deploy
-        run: |            
+        run: | 
           for file in release/*.sql; do
             echo "Running: $file"
-            snow connection -f "$file" -x
+            snow sql -f "$file" -x
           done
 
