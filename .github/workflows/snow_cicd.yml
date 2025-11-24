@@ -3,7 +3,7 @@ name: Deploy to Snowflake
 on:
   push:
     branches:
-      - master
+      - dev
 
 jobs:
   deploy:
@@ -12,19 +12,13 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-
-      - name: Set up Python
-        uses: actions/setup-python@v4
+        
+      - name: install snowflake-cli
+        uses: snowflakedb/snowflake-cli-action@v2.0
         with:
-          python-version: "3.10"
+            cli-version: "3.11.0"
 
-      - name: Install Snowflake CLI
-        run: |
-          pip install --upgrade pip
-          pip install snowflake-cli-labs
-          echo "$HOME/.local/bin" >> $GITHUB_PATH
-
-      - name: Set environment variables
+      - name: add connection
         env:
           SNOWFLAKE_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
           SNOWFLAKE_USER: ${{ secrets.SNOWFLAKE_USER }}
@@ -33,8 +27,12 @@ jobs:
           SNOWFLAKE_WAREHOUSE: ${{ secrets.SNOWFLAKE_WAREHOUSE }}
           SNOWFLAKE_DATABASE: ${{ secrets.SNOWFLAKE_DATABASE }}
           SNOWFLAKE_SCHEMA: ${{ secrets.SNOWFLAKE_SCHEMA }}
-        
         run: |
+            snow --help
+            snow connection test -x
+
+      - name: deploy
+        run: |            
           for file in release/*.sql; do
             echo "Running: $file"
             snow sql --temporary-connection \
