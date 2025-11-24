@@ -46,3 +46,4 @@ jobs:
               --schema "$SNOWFLAKE_SCHEMA" \
               --debug
           done
+
